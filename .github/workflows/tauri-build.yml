@@ -54,7 +54,7 @@ jobs:
             patchelf
 
       - name: 🏗 Build & Publish Tauri App
-        uses: tauri-apps/tauri-action@v1
+        uses: tauri-apps/tauri-action@v0.5.25
         with:
           tagName: nightly
           releaseName: "HashGuard Nightly"
