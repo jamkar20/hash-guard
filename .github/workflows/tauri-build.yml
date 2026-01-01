@@ -1,0 +1,56 @@
+name: Build Tauri App
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 🛠 Build Tauri for All Platforms
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform: [windows-latest, macos-latest, ubuntu-latest]
+
+    steps:
+      - name: 🚀 Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 📦 Install Dependencies
+        run: |
+          npm install
+          npm run tauri deps
+
+      - name: 🔧 Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+
+      - name: 📦 Tauri Build
+        uses: tauri-apps/tauri-build-action@v1
+        with:
+          skip-build: false
+          release: true
+
+      - name: 📁 List Build Artifacts
+        run: ls -R target/release/bundle
+
+      - name: 📦 Upload Release Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: tauri-build
+          path: |
+            target/release/bundle/*
