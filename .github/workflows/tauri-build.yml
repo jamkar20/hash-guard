@@ -55,6 +55,8 @@ jobs:
 
       - name: 🏗 Build & Publish Tauri App
         uses: tauri-apps/tauri-action@v0.5.25
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: nightly
           releaseName: "HashGuard Nightly"
