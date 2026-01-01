@@ -1,56 +1,83 @@
-name: Build Tauri App
+name: Publish HashGuard
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
-  pull_request:
     branches:
-      - main
-  workflow_dispatch:
+      - release
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: 🛠 Build Tauri for All Platforms
-    runs-on: ubuntu-latest
+  build-binaries:
+    name: Build (${{ matrix.platform }})
+    runs-on: ${{ matrix.platform }}
 
     strategy:
+      fail-fast: false
       matrix:
-        platform: [windows-latest, macos-latest, ubuntu-latest]
+        platform:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
 
     steps:
-      - name: 🚀 Checkout Repo
-        uses: actions/checkout@v3
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
 
-      - name: 📦 Setup Node.js
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
+          cache: npm
 
-      - name: 📦 Install Dependencies
+      - name: 🦀 Setup Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 📦 Install frontend dependencies
+        run: npm install
+
+      - name: 🐧 Install Linux dependencies
+        if: matrix.platform == 'ubuntu-latest'
         run: |
-          npm install
-          npm run tauri deps
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            webkit2gtk-4.0 \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
-      - name: 🔧 Setup Rust
-        uses: actions-rs/toolchain@v1
+      - name: 🏗 Build Tauri binaries
+        id: tauri_build
+        uses: JonasKruckenberg/tauri-build@v1
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
         with:
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
+          name: artifacts-${{ matrix.platform }}
+          path: ${{ join(fromJSON(steps.tauri_build.outputs.artifacts), '\n') }}
 
-      - name: 📦 Tauri Build
-        uses: tauri-apps/tauri-build-action@v1
+  publish:
+    name: Create GitHub Release
+    needs: build-binaries
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Download all artifacts
+        uses: actions/download-artifact@v4
         with:
-          skip-build: false
-          release: true
+          path: artifacts
 
-      - name: 📁 List Build Artifacts
-        run: ls -R target/release/bundle
-
-      - name: 📦 Upload Release Artifacts
-        uses: actions/upload-artifact@v3
+      - name: 🚀 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: tauri-build
-          path: |
-            target/release/bundle/*
+          draft: false
+          prerelease: false
+          files: artifacts/**/*
