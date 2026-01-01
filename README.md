@@ -102,7 +102,11 @@ npm run tauri dev
 
 ## 📸 Screenshots
 
-_Add screenshots here_
+### Main Window
+![Main Window](./screenshots/MainWindow.png)
+
+### Hash Computed
+![Hash Computed](./screenshots/HashComputed.png)
 
 ---
 
