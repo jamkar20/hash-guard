@@ -10,9 +10,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
-  build-binaries:
-    name: Build (${{ matrix.platform }})
+  build:
+    name: Build & Release (${{ matrix.platform }})
     runs-on: ${{ matrix.platform }}
 
     strategy:
@@ -33,7 +36,7 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: 🦀 Setup Rust (stable)
+      - name: 🦀 Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: 📦 Install frontend dependencies
@@ -50,35 +53,10 @@ jobs:
             librsvg2-dev \
             patchelf
 
-      - name: 🏗 Build Tauri binaries
-        id: tauri_build
-        uses: JonasKruckenberg/tauri-build@v1
-
-      - name: 📤 Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: 🏗 Build & Publish Tauri App
+        uses: tauri-apps/tauri-action@v1
         with:
-          name: artifacts-${{ matrix.platform }}
-          path: ${{ join(fromJSON(steps.tauri_build.outputs.artifacts), '\n') }}
-
-  publish:
-    name: Create GitHub Release
-    needs: build-binaries
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 📦 Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: 🚀 Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          draft: false
-          prerelease: false
-          files: artifacts/**/*
+          tagName: nightly
+          releaseName: "HashGuard Nightly"
+          releaseDraft: false
+          prerelease: true
