@@ -1,0 +1,9 @@
+{
+  "app.title": "Hash Guard",
+  "app.description": "File Integrity Checker (SHA1 - SHA2 - MD5)",
+  "select-file": "Select File",
+  "compute-hash": "Compute Hash",
+  "copy": "Copy",
+  "copy-success": "Copied to clipboard!",
+  "computing": "Computing ..."
+}

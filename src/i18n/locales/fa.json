@@ -1,0 +1,9 @@
+{
+  "app.title": "محافظ هش (Hash Guard)",
+  "app.description": "بررسی‌کننده‌ی یکپارچگی فایل (SHA1 - SHA2 - MD5)",
+  "select-file": "انتخاب فایل",
+  "compute-hash": "محاسبه هش",
+  "copy": "کپی",
+  "copy-success": "در کلیپ بورد کپی شد!",
+  "computing": "درحال محاسبه ..."
+}
