@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useTheme } from "../hooks/useTheme";
-import { Monitor, Moon, Sun, Sun1 } from "iconsax-reactjs";
+import { Monitor, Moon, Sun1 } from "iconsax-reactjs";
 
 export const ThemeSwitcher: FC = () => {
   const { theme, toggleTheme } = useTheme();

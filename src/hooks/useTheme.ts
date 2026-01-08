@@ -81,7 +81,8 @@ export const useTheme = (defaultPreference: ThemePreference = 'system'): UseThem
       if (prev === 'system') {
         return systemTheme === 'light' ? 'dark' : 'light';
       }
-      return prev === 'light' ? 'dark' : 'light';
+
+      return prev === 'light' ? 'dark' : 'system';
     });
   }, [systemTheme]);
 
