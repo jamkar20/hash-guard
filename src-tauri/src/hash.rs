@@ -1,7 +1,7 @@
 use anyhow::Result;
-use md5::{Digest as Md5Digest, Md5};
-use sha1::{Digest as Sha1Digest, Sha1};
-use sha2::{Digest as Sha2Digest, Sha256};
+use md5::Md5;
+use sha1::Sha1;
+use sha2::{Digest, Sha256};
 use std::fs::File;
 use std::io::Read;
 
