@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
+
+html {
+  font-family: "Quicksand", "IRANYekanX VF", sans-serif;
+}
+
 body {
   margin: 0;
   background: #f5f5f5;

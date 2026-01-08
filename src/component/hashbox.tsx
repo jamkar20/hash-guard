@@ -15,10 +15,10 @@ export const Hashbox: FC<HashboxProps> = ({ title = "", value = "" }) => {
   };
   return (
     <div className="mt-2">
-      <p className="text-xs text-zinc-400 mb-1">{title}</p>
-      <div className="bg-black rounded-lg px-3 py-2 text-xs align-middle text-green-400 overflow-x-auto flex justify-between items-center">
+      <p className="text-xs text-zinc-700 dark:text-zinc-400 mb-1">{title}</p>
+      <div className="bg-white dark:bg-black  rounded-lg px-3 py-2 text-xs align-middle text-green-600 dark:text-green-400 overflow-x-auto flex justify-between items-center">
         <pre>{value}</pre>
-        <span className="relative end-0 text-zinc-400 transition-all duration-200 hover:bg-zinc-800 rounded p-1 cursor-pointer">
+        <span className="relative end-0 text-zinc-700 dark:text-zinc-400 transition-all duration-200 hover:bg-zinc-200 hover:dark:bg-zinc-800 rounded p-1 cursor-pointer">
           <Copy size={16} onClick={handleCopy} />
         </span>
       </div>
