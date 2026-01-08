@@ -4,6 +4,9 @@ import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
 import { Hashbox } from "./component/hashbox";
+import { LangSwitcher } from "./component/lang-switcher";
+import { useTranslation } from "./hooks/useTranslation";
+import { ThemeSwitcher } from "./component/theme-switcher";
 
 function App() {
   const [filePath, setFilePath] = useState<string | null>(null);
@@ -12,6 +15,7 @@ function App() {
   const [md5, setMd5] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const { t } = useTranslation();
 
   async function selectFile() {
     const selected = await open({
@@ -47,13 +51,17 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex items-center justify-center text-zinc-100">
-      <div className="w-full max-w-xl rounded-xl bg-zinc-800 shadow-xl p-6">
+    <div className="min-h-screen bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-800 dark:text-zinc-100">
+      <div className="w-full max-w-xl rounded-xl bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-transparent dark:shadow-xl p-6">
+        <div className="absolute end-0 flex flex-col space-y-2">
+          <LangSwitcher />
+          <ThemeSwitcher />
+        </div>
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold">HashGuard</h1>
-          <p className="text-sm text-zinc-400">
-            File Integrity Checker (SHA1 - SHA2 - MD5)
+          <h1 className="text-2xl font-semibold">{t("app.title")}</h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            {t("app.description")}
           </p>
         </div>
 
@@ -61,13 +69,16 @@ function App() {
         <div className="space-y-3">
           <button
             onClick={selectFile}
-            className="w-full rounded-lg bg-zinc-700 hover:bg-zinc-600 transition px-4 py-2 text-sm"
+            className="w-full rounded-lg text-zinc-100 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600 transition px-4 py-2 text-sm"
           >
-            📂 Select File
+            📂 {t("select-file")}
           </button>
 
           {filePath && (
-            <div className="text-xs text-zinc-400 break-all bg-zinc-900 rounded p-2">
+            <div
+              className="text-xs bg-zinc-300 text-zinc-700  dark:text-zinc-400 break-all dark:bg-zinc-900 rounded p-2"
+              dir="ltr"
+            >
               {filePath}
             </div>
           )}
@@ -78,7 +89,7 @@ function App() {
           <button
             onClick={computeHash}
             disabled={loading}
-            className={`mt-4 w-full rounded-lg px-4 py-2 text-sm font-medium transition
+            className={`mt-4 w-full rounded-lg px-4 py-2 text-sm font-medium text-zinc-100 transition
               ${
                 loading
                   ? "bg-blue-600 opacity-70 cursor-not-allowed"
@@ -86,7 +97,7 @@ function App() {
               }
             `}
           >
-            {loading ? "Computing…" : "Compute Hash"}
+            {loading ? t("computing") : t("compute-hash")}
           </button>
         )}
 
